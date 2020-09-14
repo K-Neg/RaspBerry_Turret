@@ -10,6 +10,14 @@ from fastapi.responses import HTMLResponse, StreamingResponse, FileResponse
 
 app = FastAPI()
 
+#get local IP
+import os
+stream = os.popen('hostname -I')
+local_ip = stream.read().strip()
+port="5151"
+webpage_address = local_ip + ":" +port
+
+
 class Interface:
     def __init__(self):
         self.cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
@@ -25,7 +33,8 @@ class Interface:
     def start(self):
         @app.get("/", response_class=HTMLResponse)
         async def index():
-            return FileResponse("index.html")
+            index = open("index.html").read().format(first_header=webpage_address+"/video_viewer")  
+            return HTMLResponse(content=index, status_code=200)
             
 
         @app.get("/video_viewer")

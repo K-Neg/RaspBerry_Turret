@@ -9,6 +9,14 @@ from fastapi.responses import HTMLResponse, StreamingResponse
 
 app = FastAPI()
 
+#get local IP
+import os
+stream = os.popen('hostname -I')
+local_ip = stream.read().strip()
+port="5151"
+webpage_address = local_ip + ":" +port
+
+
 class Interface:
     def __init__(self):
         self.frame = None
@@ -56,16 +64,9 @@ class Interface:
         @app.get("/", response_class=HTMLResponse)
         def index():
             """Route to the main page"""
-            return """<html>
-                        <head>
-                            <title>Video Streaming - Raspberry</title>
-                        </head>
-                        <body>
-                            <h1>Video Streaming - Raspberry</h1>
-                            <img src="http://0.0.0.0:5151/video_viewer">
-                        </body>
-                    </html>"""
-
+            index = open("index.html").read().format(first_header=webpage_address+"/video_viewer")  
+            return HTMLResponse(content=index, status_code=200)
+        
         @app.get("/video_viewer")
         def video_viewer():
             """Route to the video"""
@@ -77,4 +78,4 @@ class Interface:
 
 if __name__ == "__main__":
     Interface().start()
-    uvicorn.run("__main__:app", host="0.0.0.0", port=5151, log_level="info")
+    uvicorn.run("__main__:app", host="0.0.0.0", port=port, log_level="info")
