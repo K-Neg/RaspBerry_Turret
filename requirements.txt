@@ -1,0 +1,7 @@
+fastapi
+aiofiles
+opencv-python
+uvicorn
+requests
+jinja2
+websockets
